@@ -211,6 +211,13 @@ main > header p {
   color: var(--pencil);
 }
 
+/* 불러오는 중, 오류, 글 없음 안내: 목록 제목과 같은 줄에 맞춘다 */
+
+.status-message {
+  padding-left: var(--margin);
+  color: var(--pencil);
+}
+
 /* 글 상세: 가름끈 옆으로 펼친 한 페이지 */
 
 .post-detail {

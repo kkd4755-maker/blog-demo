@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import PostList from './components/PostList'
 import PostDetail from './components/PostDetail'
+import PostForm from './components/PostForm'
 import type { Post } from './data/samplePosts'
 import { supabase } from './lib/supabase'
 import './App.css'
@@ -11,6 +12,10 @@ function App() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   // null 이면 목록, 숫자면 그 id 의 글 상세를 보여준다
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  // 목록 화면에서 글쓰기 폼을 펼쳤는지
+  const [showForm, setShowForm] = useState(false)
+  // 값이 바뀔 때마다 글 목록을 다시 불러온다
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     // 화면이 사라진 뒤에 도착한 응답은 무시한다
@@ -29,6 +34,7 @@ function App() {
       if (error) {
         setErrorMessage(`글을 불러오지 못했습니다: ${error.message}`)
       } else {
+        setErrorMessage(null)
         setPosts(data)
       }
       setLoading(false)
@@ -38,25 +44,44 @@ function App() {
     return () => {
       ignore = true
     }
-  }, [])
+  }, [reloadKey])
 
   const selectedPost = posts.find((post) => post.id === selectedId)
 
   let content
-  if (loading) {
-    content = <p className="status-message">불러오는 중...</p>
-  } else if (errorMessage) {
-    content = (
-      <p className="status-message" role="alert">
-        {errorMessage}
-      </p>
-    )
-  } else if (selectedPost) {
+  if (selectedPost) {
     content = <PostDetail post={selectedPost} onBack={() => setSelectedId(null)} />
-  } else if (posts.length === 0) {
-    content = <p className="status-message">아직 글이 없습니다</p>
   } else {
-    content = <PostList posts={posts} onSelect={setSelectedId} />
+    let listContent
+    if (loading) {
+      listContent = <p className="status-message">불러오는 중...</p>
+    } else if (errorMessage) {
+      listContent = (
+        <p className="status-message" role="alert">
+          {errorMessage}
+        </p>
+      )
+    } else if (posts.length === 0) {
+      listContent = <p className="status-message">아직 글이 없습니다</p>
+    } else {
+      listContent = <PostList posts={posts} onSelect={setSelectedId} />
+    }
+
+    content = (
+      <>
+        {showForm ? (
+          <PostForm
+            onSaved={() => setReloadKey((key) => key + 1)}
+            onClose={() => setShowForm(false)}
+          />
+        ) : (
+          <button type="button" className="write-button" onClick={() => setShowForm(true)}>
+            글쓰기
+          </button>
+        )}
+        {listContent}
+      </>
+    )
   }
 
   return (

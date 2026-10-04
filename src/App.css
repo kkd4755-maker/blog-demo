@@ -268,6 +268,116 @@ main > header p {
   margin-top: 1.4em;
 }
 
+/* 글쓰기: 목록 위에 펼치는 줄 노트. 칸은 상자 대신 밑줄 하나로 */
+
+.write-button {
+  display: block;
+  margin: 0 0 64px var(--margin);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 600;
+  color: var(--ribbon);
+  text-decoration: underline;
+  text-decoration-color: var(--ochre);
+  text-underline-offset: 6px;
+}
+
+.write-button:hover {
+  color: var(--ink);
+}
+
+.post-form {
+  margin-bottom: 80px;
+  padding-left: var(--margin);
+}
+
+.form-heading {
+  margin-bottom: 28px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.form-field {
+  display: block;
+}
+
+.form-field + .form-field {
+  margin-top: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: 16px;
+  color: var(--pencil);
+}
+
+.form-field input,
+.form-field textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 0;
+  border: 0;
+  border-bottom: 1px solid var(--pencil);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--ink);
+}
+
+.form-field textarea {
+  min-height: 12em;
+  line-height: 1.95;
+  resize: vertical;
+}
+
+.form-field input:focus-visible,
+.form-field textarea:focus-visible {
+  outline: none;
+  border-bottom: 2px solid var(--ribbon);
+}
+
+.form-message {
+  margin-top: 20px;
+  font-size: 16px;
+  color: var(--ribbon);
+}
+
+.form-message.form-error {
+  color: #8a2f1d;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 28px;
+}
+
+.form-actions .back-button {
+  margin-bottom: 0;
+}
+
+.save-button {
+  padding: 8px 28px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.save-button:hover {
+  background: var(--ribbon);
+}
+
+.save-button:disabled {
+  background: var(--pencil);
+  cursor: wait;
+}
+
 /* 모바일: 날짜는 제목 위 한 줄로, 가름끈은 왼쪽 끝으로 */
 
 @media (max-width: 600px) {

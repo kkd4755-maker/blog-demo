@@ -50,7 +50,16 @@ function App() {
 
   let content
   if (selectedPost) {
-    content = <PostDetail post={selectedPost} onBack={() => setSelectedId(null)} />
+    content = (
+      <PostDetail
+        post={selectedPost}
+        onBack={() => setSelectedId(null)}
+        onDeleted={() => {
+          setSelectedId(null)
+          setReloadKey((key) => key + 1)
+        }}
+      />
+    )
   } else {
     let listContent
     if (loading) {

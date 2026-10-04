@@ -11,11 +11,15 @@ type PostFormProps = {
 const TITLE_MAX = 100
 const AUTHOR_MAX = 30
 const CONTENT_MAX = 5000
+// 지울 때 쓰는 비밀번호. Supabase create_post 함수의 제한과 같다
+const PASSWORD_MIN = 4
+const PASSWORD_MAX = 72
 
 function PostForm({ onSaved, onClose }: PostFormProps) {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [content, setContent] = useState('')
+  const [password, setPassword] = useState('')
   const [saving, setSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [savedMessage, setSavedMessage] = useState<string | null>(null)
@@ -31,16 +35,27 @@ function PostForm({ onSaved, onClose }: PostFormProps) {
       !newPost.title && '제목',
       !newPost.author && '닉네임',
       !newPost.content && '내용',
+      !password && '비밀번호',
     ].filter((name): name is string => Boolean(name))
 
     if (emptyFields.length > 0) {
       setErrorMessage(`${emptyFields.join(', ')} 칸이 비어 있습니다.`)
       return
     }
+    if (password.length < PASSWORD_MIN) {
+      setErrorMessage(`비밀번호는 ${PASSWORD_MIN}자 이상으로 정해 주세요.`)
+      return
+    }
 
     setSaving(true)
     setErrorMessage(null)
-    const { error } = await supabase.from('posts').insert(newPost)
+    // 글과 비밀번호를 함께 저장한다. 비밀번호는 Supabase 안에서 알아볼 수 없게 바뀌어 보관된다
+    const { error } = await supabase.rpc('create_post', {
+      p_title: newPost.title,
+      p_content: newPost.content,
+      p_author: newPost.author,
+      p_password: password,
+    })
     setSaving(false)
 
     if (error) {
@@ -51,6 +66,7 @@ function PostForm({ onSaved, onClose }: PostFormProps) {
     setTitle('')
     setAuthor('')
     setContent('')
+    setPassword('')
     setSavedMessage('글을 저장했습니다.')
     onSaved()
   }
@@ -83,6 +99,16 @@ function PostForm({ onSaved, onClose }: PostFormProps) {
           maxLength={CONTENT_MAX}
           rows={10}
           onChange={(event) => setContent(event.target.value)}
+        />
+      </label>
+      <label className="form-field">
+        <span className="form-label">비밀번호 (글을 지울 때 필요해요)</span>
+        <input
+          type="password"
+          value={password}
+          maxLength={PASSWORD_MAX}
+          autoComplete="new-password"
+          onChange={(event) => setPassword(event.target.value)}
         />
       </label>
       {errorMessage && (
